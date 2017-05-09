@@ -2,6 +2,7 @@ package com.ivan.chardemo;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -84,7 +85,7 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
         // 加入下面这三句是当抽屉隐藏后，打开时防止已经绘过图的区域闪烁，所以干脆就从新开始绘制。
         isRunning = true;
         currentX = 0;
-        //clearCanvas();
+        clearCanvas();
         bgPaint = new Paint(1);
         bgPaint.setDither(true);
         bgPaint.setFilterBitmap(true);
@@ -97,11 +98,12 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
         mPointPaint = new Paint();
         mPointPaint.setAntiAlias(true);
         mPointPaint.setColor(Color.BLACK);
-        mPointPaint.setStrokeWidth(12);
+        mPointPaint.setStrokeWidth(38);
 
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);// 用来画折线
         mLinePaint.setColor(Color.BLACK);
-        mLinePaint.setStrokeWidth(6);
+        mLinePaint.setStrokeWidth(10);
+        mLinePaint.setStrokeJoin(Paint.Join.ROUND);
         mLinePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 
@@ -117,7 +119,7 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void run() {
 
-                drawChartLines();
+
                 drawChartLine();
                 //setValueAnimators();
             }
@@ -128,6 +130,7 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+        clearCanvas();
         Log.i("系统信息", "surfaceChanged");
     }
 
@@ -157,7 +160,10 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
     }
     private void drawChartLines() {
 
-        Canvas canvas = surfaceHolder.lockCanvas();
+        Canvas canvasAll = surfaceHolder.lockCanvas();
+
+        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(b);
         DashPathEffect effects = new DashPathEffect(new float[]{5, 10}, 1);
         chartPaint.setPathEffect(effects);
         //五组虚线
@@ -199,20 +205,20 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawLine(width / 5 * 5, height, width / 5 * 5, height / 6, chartPaint);
         canvas.drawLine(width / 5 * 6, height, width / 5 * 6, height / 6, chartPaint);
 
-        surfaceHolder.unlockCanvasAndPost(canvas);
+        canvasAll.drawBitmap(b,0,200,chartPaint);
+        surfaceHolder.unlockCanvasAndPost(canvasAll);
 
     }
 
 
     private  void setValueAnimator2(){
         Canvas canvas;
-
-
-
         for (int i=0;i<width/5;i+=16){
             clearCanvas();
             canvas=surfaceHolder.lockCanvas();
-           canvas.translate(-i,0);
+            //canvas.save();
+            canvas.translate(-i,0);
+
 //
 //            LinkedList<PointF> tempList=copyData(linkedList);
 //            for (int k=0;k<tempList.size();k++){
@@ -232,21 +238,17 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
                     PointF point = linkedList.get(ii);
                     path.lineTo(width / 5 * ii, point.y );
                 }
-                path.lineTo(width/5*4, height);
+                path.lineTo(width/5*3, height/2);
                 path.close();
                 // path.lineTo(0, centerY);
 
-                Shader bgShader1 = new LinearGradient(0.0F, 0.0F, 0.0F, height, 0x992dcaff, 0x4a76ff, Shader.TileMode.CLAMP);
+                Shader bgShader1 = new LinearGradient(0.0F, 0.0F, 0.0F, height/2, 0x992dcaff, 0x4a76ff, Shader.TileMode.CLAMP);
                 bgPaint.setShader(bgShader1);
                 canvas.drawPath(path, bgPaint);
             }
+            //canvas.restore();
             canvas.translate(i,0);
 
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
 
@@ -334,16 +336,17 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
     private void drawChartLine() {
 
         clearCanvas();
+        //drawChartLines();
         while (isRunning) {
             try {
                 drawChart(currentX);// 绘制
 
                 currentX += 9;// 往前进
 
-                if (currentX > right) {
+                if (currentX >= right) {
                     // 如果到了终点，则清屏重来
                     // todo 平移所画的路径
-                    //clearCanvas();
+                    clearCanvas();
                     isRunning=false;
                     setValueAnimator2();
                     //valueAnimator.start();
@@ -360,10 +363,12 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
 
     void drawChart(int length) {
 
+
         if (length == 0)
             oldX = 0;
         Canvas canvas = surfaceHolder.lockCanvas(new Rect(oldX, 0, oldX + length, height));// 范围选取正确
-        //Log.i("系统消息-drawChart", "oldX = " + oldX + "  length = " + length);
+        //oldX=length;
+        Log.i("系统消息-drawChart", "oldX = " + oldX + "  length = " + length);
         Path path = new Path();
         for (int j = 0; j < linkedList.size() - 1; j++) {
 
@@ -377,7 +382,7 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
                 PointF point = linkedList.get(i);
                 path.lineTo(width / 5 * i, point.y );
             }
-            path.lineTo(width/5*4, height);
+            path.lineTo(width/5*3, height/2);
             path.close();
             // path.lineTo(0, centerY);
 
@@ -409,5 +414,6 @@ public class MyLineChart extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);// 清除画布
 
         surfaceHolder.unlockCanvasAndPost(canvas);
+
     }
 }
