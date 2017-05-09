@@ -25,6 +25,8 @@ import android.view.animation.LinearInterpolator;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by ivan on 2017/5/6.
  */
@@ -60,15 +62,14 @@ public class ChartView extends View {
         public void handleMessage(Message msg) {
             if (msg.what == 0x1234) {
 
-                if (linkedList.size()>4)
+                if (linkedList.size()>5)
                 {
                     linkedList.remove(0);
                 }
                 linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
-
-
-
+                isRuning=false;
                 start();
+
 
                 //invalidate();
                 //startAnim(1000);
@@ -83,11 +84,11 @@ public class ChartView extends View {
 
     public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        linkedList.add(new PointF((float) (mWidth / 5), 200f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 2), 149f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 3), 349f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 4), 249f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 5), 269f));
+        linkedList.add(new PointF( 0f, 200f));
+        linkedList.add(new PointF((float) (mWidth / 5), 149f));
+        linkedList.add(new PointF((float) (mWidth / 5 * 2), 349f));
+        linkedList.add(new PointF((float) (mWidth / 5 * 3), 249f));
+        //linkedList.add(new PointF((float) (mWidth / 5 * 4), 269f));
 
         bgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint = new Paint(1);
@@ -119,40 +120,36 @@ public class ChartView extends View {
         temPaint.setStrokeWidth(6);
         temPaint.setTextSize(50);
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    handler.sendEmptyMessage(0x1234);
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                while (true) {
+//
+//
+//                }
+//            }
+//        }).start();
     }
 
     private void start() {
         if (valueAnimator!=null&&valueAnimator.isRunning()){
             return;
         }
-        valueAnimator= ValueAnimator.ofInt(0,1);
+        valueAnimator= ValueAnimator.ofFloat(0,1);
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(1000);
-        valueAnimator.setEvaluator(new IntEvaluator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                int value= (int) animation.getAnimatedValue();
-                int temp=value*(mWidth/5);
+                float value= (float) animation.getAnimatedValue();
+                float temp=value*(mWidth/5);
                 if (value!=0){
-                    System.out.println("1234");
+                    System.out.println(value);
                 }
+                ArrayList<PointF> templist =copyData(linkedList);
                 for (int i=0;i<linkedList.size();i++){
-                    linkedList.get(i).set(linkedList.get(i).x-temp,linkedList.get(i).y);
+                    linkedList.get(i).set(templist.get(i).x-temp,templist.get(i).y);
 
                 }
                 invalidate();
@@ -187,10 +184,11 @@ public class ChartView extends View {
 
 
                 if (linkedList != null) {
-                    while (linkedList.size() > 0 && linkedList.get(0).x < 0) {
+                    if (linkedList.size() > 0 && linkedList.get(0).x < 0) {
                         linkedList.remove(0);
                     }
                 }
+                isRuning=true;
 
             }
 
@@ -215,6 +213,17 @@ public class ChartView extends View {
         centerX = 0;
         centerY = h;
 
+    }
+
+
+    //深复制
+    private ArrayList<PointF> copyData(List<PointF> points) {
+        ArrayList<PointF> data = new ArrayList<>();
+        for (int i = 0; i < points.size(); i++) {
+            PointF point = points.get(i);
+            data.add(new PointF(point.x, point.y));
+        }
+        return data;
     }
 
     /**
@@ -262,6 +271,10 @@ public class ChartView extends View {
         drawPointLine(canvas);
         drawBg(canvas);
         drawPoint(canvas);
+        if (isRuning){
+            handler.removeMessages(0x1234);
+            handler.sendEmptyMessageDelayed(0x1234,1000);
+        }
         //setAnim(canvas);
 
 
@@ -273,11 +286,13 @@ public class ChartView extends View {
         Path path = new Path();
         path.moveTo(0, centerY);
         path.lineTo(0, linkedList.get(0).y);
+        int k=0;
         for (int i = 1; i < linkedList.size(); i++) {
             PointF point = linkedList.get(i);
             path.lineTo(mWidth / 5 * i, point.y );
+            k++;
         }
-        path.lineTo(mWidth/5*4, centerY);
+        path.lineTo(mWidth/5*k, centerY);
         path.close();
        // path.lineTo(0, centerY);
 
