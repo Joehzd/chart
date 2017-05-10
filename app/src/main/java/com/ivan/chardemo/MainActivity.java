@@ -17,10 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        MyLineChart.right = dm.widthPixels - 35;
-        MyLineChart.gapX = (dm.heightPixels - 45) / 23;
+//        DisplayMetrics dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//
+//        MyLineChart.right = dm.widthPixels - 35;
+//        MyLineChart.gapX = (dm.heightPixels - 45) / 23;
     }
 }

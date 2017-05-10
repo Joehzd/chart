@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,30 +49,28 @@ public class ChartView extends View {
     Paint temPaint;
 
     Path path = new Path();
+    ArrayList<PointF> tempList;
     ValueAnimator valueAnimator;
-    ValueAnimator valueAnimator1;
-    Canvas commomCanvas;
+    ValueAnimator newDataAnimator;
     private float mProgress;    //  动画进度
 
     int centerX, centerY, mWidth, mHeight;
-    boolean isRuning=true;
+    boolean isRuning;
+    boolean isNewData=false;
+    LinkedList<PointF> newDataList=new LinkedList<>();
 
-    LinkedList<PointF> linkedList = new LinkedList<>();
+    List<PointF> linkedList = Collections.synchronizedList(new LinkedList<PointF>());
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             if (msg.what == 0x1234) {
 
-                if (linkedList.size()>5)
-                {
-                    linkedList.remove(0);
-                }
-                linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+
+                //linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+
                 isRuning=false;
-                start();
+                valueAnimator.start();
 
-
-                //invalidate();
                 //startAnim(1000);
 
             }
@@ -84,11 +83,14 @@ public class ChartView extends View {
 
     public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+        isRuning=true;
+        mWidth = getContext().getResources().getDisplayMetrics().widthPixels;
         linkedList.add(new PointF( 0f, 200f));
-        linkedList.add(new PointF((float) (mWidth / 5), 149f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 2), 349f));
-        linkedList.add(new PointF((float) (mWidth / 5 * 3), 249f));
-        //linkedList.add(new PointF((float) (mWidth / 5 * 4), 269f));
+        linkedList.add(new PointF(mWidth / 5, 149f));
+        linkedList.add(new PointF(mWidth / 5 * 2, 349f));
+        linkedList.add(new PointF(mWidth / 5 * 3, 249f));
+        linkedList.add(new PointF(mWidth / 5 * 4, 269f));
 
         bgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint = new Paint(1);
@@ -119,23 +121,73 @@ public class ChartView extends View {
         temPaint.setTypeface(typeface);
         temPaint.setStrokeWidth(6);
         temPaint.setTextSize(50);
+        tempList =copyData(linkedList);
 
-//        new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                while (true) {
-//
-//
-//                }
-//            }
-//        }).start();
+        animatorH();
+        animatorHtoNewData();
+
+
     }
 
-    private void start() {
-        if (valueAnimator!=null&&valueAnimator.isRunning()){
+    private void animatorHtoNewData(){
+
+        //
+        if (linkedList.size()<0){
             return;
         }
+        final float randomy=(float)Math.random()*300+100;
+        final float px=mWidth/5*4-linkedList.get(linkedList.size()-2).x;
+        final float py=randomy-linkedList.get(linkedList.size()-2).y;
+
+        newDataAnimator= ValueAnimator.ofFloat(0,1);
+        newDataAnimator.setInterpolator(new LinearInterpolator());
+        newDataAnimator.setDuration(1000);
+        newDataAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value= (float) animation.getAnimatedValue();
+                float temp=value*(mWidth/5);
+                if (value!=0){
+                    System.out.println("value="+value);
+                }
+
+                newDataList.clear();
+                newDataList.add(new PointF(mWidth/5*(4+value),randomy+py*value));
+                isNewData=true;
+                invalidate();
+            }
+        });
+        newDataAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+
+                isRuning=true;
+                isNewData=false;
+                //linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+    }
+    private void animatorH() {
+
+        isNewData=false;
         valueAnimator= ValueAnimator.ofFloat(0,1);
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(1000);
@@ -145,33 +197,17 @@ public class ChartView extends View {
                 float value= (float) animation.getAnimatedValue();
                 float temp=value*(mWidth/5);
                 if (value!=0){
-                    System.out.println(value);
+                    System.out.println("value="+value);
                 }
-                ArrayList<PointF> templist =copyData(linkedList);
-                for (int i=0;i<linkedList.size();i++){
-                    linkedList.get(i).set(templist.get(i).x-temp,templist.get(i).y);
+                for (int i=0;i<tempList.size();i++){
 
-                }
-                invalidate();
-            }
-        });
-
-        valueAnimator.start();
-
-        valueAnimator1=ValueAnimator.ofFloat(0,mWidth/5);
-        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float temp= (float) animation.getAnimatedValue();
-                for (int i=0;i<linkedList.size();i++){
-                    linkedList.get(i).set(linkedList.get(i).x-temp,linkedList.get(i).y);
+                    linkedList.get(i).set((tempList.get(i).x)-temp,tempList.get(i).y);
+                    //System.out.println(tempList.get(i).x+" -- "+ linkedList.get(i).x);
 
                 }
                 invalidate();
             }
         });
-        valueAnimator1.setDuration(1000);
-
 
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -184,11 +220,22 @@ public class ChartView extends View {
 
 
                 if (linkedList != null) {
-                    if (linkedList.size() > 0 && linkedList.get(0).x < 0) {
+                    while (linkedList.size() > 0 && linkedList.get(0).x < 0) {
                         linkedList.remove(0);
+
                     }
                 }
-                isRuning=true;
+                if (linkedList.size()<5)
+                {
+                    linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+                }
+
+
+                tempList =copyData(linkedList);
+                //invalidate();
+                isNewData=true;
+
+                newDataAnimator.start();
 
             }
 
@@ -218,6 +265,7 @@ public class ChartView extends View {
 
     //深复制
     private ArrayList<PointF> copyData(List<PointF> points) {
+        //System.out.println(points.get(0).x);
         ArrayList<PointF> data = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             PointF point = points.get(i);
@@ -264,6 +312,19 @@ public class ChartView extends View {
         canvas.drawPath(path, linePaint);
     }
 
+    private void drawNewData(Canvas canvas){
+        float x=linkedList.get(linkedList.size()-2).x;
+        float y=linkedList.get(linkedList.size()-2).y;
+        canvas.drawLine(x,y
+                ,newDataList.get(0).x,newDataList.get(0).y,linePaint);
+        Path newDataPath=new Path();
+        newDataPath.moveTo(x,y);
+        newDataPath.lineTo(newDataList.get(0).x,newDataList.get(0).y);
+        newDataPath.lineTo(newDataList.get(0).x,mHeight);
+        newDataPath.lineTo(x,mHeight);
+        newDataPath.close();
+        canvas.drawPath(newDataPath,bgPaint);
+    }
     @Override
     protected void onDraw(final Canvas canvas) {
 
@@ -271,9 +332,13 @@ public class ChartView extends View {
         drawPointLine(canvas);
         drawBg(canvas);
         drawPoint(canvas);
+        if (isNewData){
+            canvas.clipRect(mWidth/5*3,0,mWidth/5*4,mHeight);
+            drawNewData(canvas);
+        }
         if (isRuning){
             handler.removeMessages(0x1234);
-            handler.sendEmptyMessageDelayed(0x1234,1000);
+            handler.sendEmptyMessage(0x1234);
         }
         //setAnim(canvas);
 
@@ -289,12 +354,12 @@ public class ChartView extends View {
         int k=0;
         for (int i = 1; i < linkedList.size(); i++) {
             PointF point = linkedList.get(i);
-            path.lineTo(mWidth / 5 * i, point.y );
+            path.lineTo(point.x, point.y );
             k++;
         }
-        path.lineTo(mWidth/5*k, centerY);
+        path.lineTo(linkedList.get(k).x, centerY);
         path.close();
-       // path.lineTo(0, centerY);
+
 
         Shader bgShader1 = new LinearGradient(0.0F, 0.0F, 0.0F, centerY, 0x992dcaff, 0x4a76ff, Shader.TileMode.CLAMP);
         bgPaint.setShader(bgShader1);
@@ -305,10 +370,9 @@ public class ChartView extends View {
     //画点
     private void drawPoint(Canvas canvas) {
 
-        //Path path=new Path();
 
         for (int i=1;i<linkedList.size();i++){
-            canvas.drawCircle(mWidth / 5 * i, linkedList.get(i).y, 16f,pointPaint);
+            canvas.drawCircle(linkedList.get(i).x, linkedList.get(i).y, 16f,pointPaint);
             //path.addCircle(mWidth / 5 * i, linkedList.get(i).y, 16f, Path.Direction.CW);
         }
        // canvas.drawPath(path, pointPaint);
@@ -318,18 +382,12 @@ public class ChartView extends View {
     private void drawPointLine(Canvas canvas) {
 
 
-//        path.reset();
-//        path.moveTo(0, linkedList.get(0).y);
-
         for (int i=0;i<linkedList.size()-1;i++){
 
-            canvas.drawLine(mWidth / 5 * i, linkedList.get(i).y,mWidth / 5 * (i+1), linkedList.get(i+1).y,linePaint);
-//            path.lineTo(mWidth / 5 * i, linkedList.get(i).y);
+            canvas.drawLine(linkedList.get(i).x, linkedList.get(i).y,linkedList.get(i+1).x, linkedList.get(i+1).y,linePaint);
+
         }
 
-//        setAnim(canvas);
-//        canvas.drawPath(path, linePaint);
- //       startAnim(1000);
 
 
 
