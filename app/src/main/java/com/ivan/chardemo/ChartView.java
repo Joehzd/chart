@@ -58,8 +58,6 @@ public class ChartView extends View {
 
     private int TEMPERATURE_MAX_C=40;
     private int TEMPERATURE_MIN_C=30;
-
-
     private Path path = new Path();
     private ArrayList<PointF> tempList;
     private ValueAnimator valueAnimator;
@@ -97,6 +95,7 @@ public class ChartView extends View {
     };
     public ChartView(Context context) {
         super(context);
+        initData();
 
     }
 
@@ -105,29 +104,6 @@ public class ChartView extends View {
 
         initData();
 
-        final int[] count = {0};
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    while (true){
-//                        Thread.sleep(10);
-//                        count[0] +=10;
-//
-//                        firstValue=(count[0]);
-//                        invalidate();
-//                        if (count[0]>=mHeight){
-//                            isFirst=false;
-//                            isRuning=true;
-//                            return;
-//                        }
-//                    }
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
 
 
 
@@ -196,7 +172,7 @@ public class ChartView extends View {
         firstAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-               // float aaa=animation.getAnimatedFraction();
+
                 float value= (float) animation.getAnimatedValue();
                 float temp=value*(mWidth/5*4+27);
                 System.out.println(saveTemp[0]);
@@ -245,7 +221,7 @@ public class ChartView extends View {
             return;
         }
         final float randomy=(float)Math.random()*300+100;
-        final float py=randomy-linkedList.get(linkedList.size()-2).y;
+
 
         newDataAnimator= ValueAnimator.ofFloat(0,1);
         newDataAnimator.setInterpolator(new LinearInterpolator());
@@ -340,7 +316,12 @@ public class ChartView extends View {
                 }
                 if (linkedList!=null&&linkedList.size()<5)
                 {
-                    linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+                    if (newDataList.size()<0){
+                        linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+                    }else {
+                        linkedList.add(newDataList.get(0));
+                    }
+
                 }
 
 
@@ -370,22 +351,31 @@ public class ChartView extends View {
      **/
     private void animatorVertical() {
 
+        float slideH=0;
+        if (temperatureCount>0){
+
+            slideH=temperatureCount;
+        }else {
+            slideH=Math.abs(temperatureCount);
+        }
         verticalAnimator= ValueAnimator.ofFloat(0,1);
         verticalAnimator.setInterpolator(new LinearInterpolator());
         verticalAnimator.setDuration(700);
+        final float finalSlideH = slideH;
         verticalAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value= (float) animation.getAnimatedValue();
-                float temp=value*(mHeight/6);
+
+                float temp=value*(mHeight/6* finalSlideH);
                 if (value!=0){
                     //System.out.println("vertical="+value);
                 }
                 for (int i=0;i<tempList.size();i++){
 
-                    if (linkedList.get(linkedList.size()-1).y<=TEMPERATURE_MIN){
+                    if (temperatureCount<0){
                         linkedList.get(i).set((tempList.get(i).x),(tempList.get(i).y)+temp);
-                    }else if(linkedList.get(linkedList.size()-1).y>=TEMPERATURE_MAX){
+                    }else if(temperatureCount>0){
                         linkedList.get(i).set((tempList.get(i).x),(tempList.get(i).y)-temp);
                     }else {
                         verticalAnimator.cancel();
@@ -408,6 +398,7 @@ public class ChartView extends View {
             public void onAnimationEnd(Animator animation) {
 
                 isRuning=true;
+                temperatureCount=0;
                 tempList =copyData(linkedList);
             }
 
@@ -484,19 +475,7 @@ public class ChartView extends View {
         canvas.drawPath(path, linePaint);
     }
 
-    private void drawNewData(Canvas canvas){
-        float x=linkedList.get(linkedList.size()-2).x;
-        float y=linkedList.get(linkedList.size()-2).y;
-        canvas.drawLine(x,y
-                ,newDataList.get(0).x,newDataList.get(0).y,linePaint);
-        Path newDataPath=new Path();
-        newDataPath.moveTo(x,y);
-        newDataPath.lineTo(newDataList.get(0).x,newDataList.get(0).y);
-        newDataPath.lineTo(newDataList.get(0).x,mHeight);
-        newDataPath.lineTo(x,mHeight);
-        newDataPath.close();
-        canvas.drawPath(newDataPath,bgPaint);
-    }
+
     @Override
     protected void onDraw(final Canvas canvas) {
 
@@ -637,12 +616,36 @@ public class ChartView extends View {
     private float temperatureToPix(float temperature){
         float pix=0f;
         //每一度所代表的像素高度
-        float single=(centerY-centerY/5)/10;
+        System.out.println(temperature);
+        float single=(centerY-centerY/5*2)/10;
 
-
+        pix=centerY-centerY/5-(temperature-TEMPERATURE_MIN_C)*single;
 
         return pix;
 
+    }
+    /**
+     *
+     * 设置温度
+     *
+     * */
+
+    //温度差计数器
+    private int temperatureCount=0;
+
+    public void setTempurature(float temperature){
+        while (temperature>TEMPERATURE_MAX_C){
+            TEMPERATURE_MAX_C++;
+            TEMPERATURE_MIN_C++;
+            temperatureCount++;
+        }
+        while (temperature<=TEMPERATURE_MIN_C){
+            TEMPERATURE_MAX_C--;
+            TEMPERATURE_MIN_C--;
+            temperatureCount--;
+        }
+        newDataList.clear();
+        newDataList.add(new PointF(mWidth/5*4,temperatureToPix(temperature)));
     }
 
     //绘制温度
