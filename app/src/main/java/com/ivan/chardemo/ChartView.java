@@ -56,6 +56,9 @@ public class ChartView extends View {
     private float TEMPERATURE_MAX=400f;
     private float TEMPERATURE_MIN=200f;
 
+    private int TEMPERATURE_MAX_C=40;
+    private int TEMPERATURE_MIN_C=30;
+
 
     private Path path = new Path();
     private ArrayList<PointF> tempList;
@@ -625,6 +628,22 @@ public class ChartView extends View {
     }
 
 
+    /**
+     * 温度-像素 转换
+     *
+     * @param temperature 温度
+     * @return 屏幕的像素高度
+     * */
+    private float temperatureToPix(float temperature){
+        float pix=0f;
+        //每一度所代表的像素高度
+        float single=(centerY-centerY/5)/10;
+
+
+
+        return pix;
+
+    }
 
     //绘制温度
     private void drawChartLine(Canvas canvas) {
@@ -632,7 +651,7 @@ public class ChartView extends View {
         //温度
         temperaturePaint.setStyle(Paint.Style.FILL);
         temperaturePaint.setTextSize(50);
-        canvas.drawText(30+"", mWidth-120, centerY - centerY / 4, temperaturePaint);
+        canvas.drawText(TEMPERATURE_MIN_C+"", mWidth-120, centerY - centerY / 4, temperaturePaint);
 
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.STROKE);
@@ -648,7 +667,7 @@ public class ChartView extends View {
         ///////
         temperaturePaint.setStyle(Paint.Style.FILL);
         temperaturePaint.setTextSize(50);
-        canvas.drawText(40 + "", mWidth-120, centerY / 6 , temperaturePaint);
+        canvas.drawText(TEMPERATURE_MAX_C + "", mWidth-120, centerY / 6 , temperaturePaint);
 
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.STROKE);
