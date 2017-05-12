@@ -13,5 +13,16 @@
 
         android:layout_width="match_parent"
         android:layout_height="200dp" />
+    <Button
+        android:layout_marginTop="300dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bg"/>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_marginTop="400dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/ic_delete"
+        />
 
 </FrameLayout>

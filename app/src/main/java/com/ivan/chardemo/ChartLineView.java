@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,6 +21,7 @@ public class ChartLineView extends View {
     //表格画笔
     Paint vchartPaint;
     Paint hchartPaint;
+    Paint teee;
 
     public ChartLineView(Context context) {
         super(context);
@@ -32,6 +34,8 @@ public class ChartLineView extends View {
         hchartPaint.setStyle(Paint.Style.STROKE);
         hchartPaint.setStrokeWidth(1);
 
+        teee=new Paint();
+        teee.setColor(Color.RED);
         vchartPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         vchartPaint.setColor(Color.argb(51,255,255,255));
         vchartPaint.setStyle(Paint.Style.STROKE);
@@ -91,6 +95,15 @@ public class ChartLineView extends View {
         canvas.drawLine(mWidth / 5 * 4, centerY, mWidth / 5 * 4, centerY / 5, vchartPaint);
         canvas.drawLine(mWidth / 5 * 5, centerY, mWidth / 5 * 5, centerY / 5, vchartPaint);
 
+
+        drawHalfRoundRect(canvas,new RectF(100f,100f,500f,500f),80f);
+
+
+
+    }
+    public void drawHalfRoundRect(Canvas canvas,RectF rectF,float radius){
+        canvas.drawRoundRect(rectF,radius,radius,teee);
+        canvas.drawRect(rectF.left,rectF.top,rectF.right-radius,rectF.bottom,teee);
 
     }
 }

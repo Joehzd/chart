@@ -12,10 +12,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0x1234:
-                    chartView.setTempurature((float) Math.random()*10+32);
+                    chartView.setTempurature((float) Math.random()*10+35,true);
                     break;
-
-
             }
 
         }
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 while (true){
                     handler.sendEmptyMessage(0x1234);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -44,5 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chartView.recycleResourse();
     }
 }

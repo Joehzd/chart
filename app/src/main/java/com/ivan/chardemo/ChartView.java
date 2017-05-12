@@ -35,14 +35,15 @@ import java.util.List;
 
 public class ChartView extends View {
 
-    //点画笔
-    Paint bluePointPaint ;
+    //三种点画笔
+    Paint bluePointPaint;
 
-    Paint redPointPaint ;
+    Paint redPointPaint;
 
-    Paint pointPaint ;
+    Paint pointPaint;
+
     //线条画笔
-    Paint linePaint ;
+    Paint linePaint;
 
     //遮罩画笔
     Paint bgPaint;
@@ -50,42 +51,44 @@ public class ChartView extends View {
     //温度画笔
     private Paint temperaturePaint;
 
-    private float pointSize=26f;
-    private float redPointSize=18f;
-    private float newDataSize=5f;
-    private float TEMPERATURE_MAX=400f;
-    private float TEMPERATURE_MIN=200f;
+    private float pointSize = 26f;
+    private float redPointSize = 18f;
+    private float newDataSize = 5f;
+    private int TEMPERATURE_MAX = 40;
+    private int TEMPERATURE_MIN = 30;
 
-    private int TEMPERATURE_MAX_C=40;
-    private int TEMPERATURE_MIN_C=30;
+    private int TEMPERATURE_MAX_C = 40;
+    private int TEMPERATURE_MIN_C = 30;
     private Path path = new Path();
     private ArrayList<PointF> tempList;
+
+    // 四种移动动画
     private ValueAnimator valueAnimator;
     private ValueAnimator verticalAnimator;
     private ValueAnimator newDataAnimator;
     private ValueAnimator firstAnimator;
+
     private float mProgress;    //  动画进度
 
     private int centerX, centerY, mWidth, mHeight;
-    private boolean isRuning=false;
-    private boolean isNewData=false;
-    private  boolean isFirst=true;
-    private  boolean isOnce=true;
+    private boolean isRuning = false;
+    private boolean isNewData = false;
+    private boolean isFirst = true;
+    private boolean isOnce = true;
 
-    private  float firstValue=0.0f;
-    private LinkedList<PointF> newDataList=new LinkedList<>();
+    private float firstValue = 0.0f;
+    private LinkedList<PointF> newDataList = new LinkedList<>();
 
     private List<PointF> linkedList = Collections.synchronizedList(new LinkedList<PointF>());
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0x1234:
-                    isRuning=false;
+                    isRuning = false;
                     valueAnimator.start();
                     break;
                 case 0x1235:
-
                     firstAnimator.start();
                     break;
 
@@ -93,6 +96,7 @@ public class ChartView extends View {
 
         }
     };
+
     public ChartView(Context context) {
         super(context);
         initData();
@@ -105,22 +109,24 @@ public class ChartView extends View {
         initData();
 
 
-
-
     }
 
     /**
      * 初始化数据
-     * */
+     */
     private void initData() {
         mWidth = getContext().getResources().getDisplayMetrics().widthPixels;
-        linkedList.add(new PointF( 0f, 200f));
+        if (linkedList==null){
+            linkedList=new LinkedList<>();
+        }
+        linkedList.clear();
+        linkedList.add(new PointF(0f, 200f));
         linkedList.add(new PointF(mWidth / 5, 149f));
         linkedList.add(new PointF(mWidth / 5 * 2, 349f));
         linkedList.add(new PointF(mWidth / 5 * 3, 249f));
         linkedList.add(new PointF(mWidth / 5 * 4, 269f));
 
-        bgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint = new Paint(1);
         bgPaint.setDither(true);
         bgPaint.setFilterBitmap(true);
@@ -136,7 +142,7 @@ public class ChartView extends View {
         redPointPaint.setStyle(Paint.Style.FILL);
         redPointPaint.setStrokeWidth(16);
         bluePointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bluePointPaint.setColor(Color.parseColor("#009933"));
+        bluePointPaint.setColor(Color.parseColor("#2A99FF"));
         bluePointPaint.setStyle(Paint.Style.FILL);
         bluePointPaint.setStrokeWidth(16);
 
@@ -146,14 +152,14 @@ public class ChartView extends View {
         linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         linePaint.setStrokeWidth(5);
 
-        temperaturePaint =new Paint(Paint.ANTI_ALIAS_FLAG);
+        temperaturePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         temperaturePaint.setColor(Color.WHITE);
         temperaturePaint.setStyle(Paint.Style.FILL);
         //Typeface typeface=Typeface.create("big", Typeface.BOLD);
         //temperaturePaint.setTypeface(typeface);
         temperaturePaint.setStrokeWidth(6);
         temperaturePaint.setTextSize(50);
-        tempList =copyData(linkedList);
+        tempList = copyData(linkedList);
 
         animatorFirst();
         animatorHorizontial();
@@ -162,9 +168,9 @@ public class ChartView extends View {
     }
 
 
-    private void animatorFirst(){
+    private void animatorFirst() {
         final float[] saveTemp = {0f};
-        firstAnimator= ValueAnimator.ofFloat(0.1f,1.0f);
+        firstAnimator = ValueAnimator.ofFloat(0.1f, 1.0f);
         firstAnimator.setInterpolator(new LinearInterpolator());
 
         firstAnimator.setEvaluator(new FloatEvaluator());
@@ -173,13 +179,13 @@ public class ChartView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
 
-                float value= (float) animation.getAnimatedValue();
-                float temp=value*(mWidth/5*4+27);
+                float value = (float) animation.getAnimatedValue();
+                float temp = value * (mWidth / 5 * 4 + 27);
                 System.out.println(saveTemp[0]);
-                firstValue=firstValue+(temp-saveTemp[0]);
-                saveTemp[0] =temp;
-                if (value!=0){
-                    System.out.println("firstValue="+firstValue);
+                firstValue = firstValue + (temp - saveTemp[0]);
+                saveTemp[0] = temp;
+                if (value != 0) {
+                    System.out.println("firstValue=" + firstValue);
                 }
 
                 invalidate();
@@ -195,9 +201,9 @@ public class ChartView extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                firstValue=0;
-                isRuning=true;
-                isFirst=false;
+                firstValue = 0;
+                isRuning = true;
+                isFirst = false;
             }
 
             @Override
@@ -211,31 +217,29 @@ public class ChartView extends View {
             }
         });
     }
+
     /***
      * 新数据增加动画
      *
      **/
-    private void animatorHtoNewData(){
+    private void animatorHtoNewData() {
 
-        if (linkedList.size()<0){
+        if (linkedList.size() < 0) {
             return;
         }
-        final float randomy=(float)Math.random()*300+100;
 
-
-        newDataAnimator= ValueAnimator.ofFloat(0,1);
+        newDataAnimator = ValueAnimator.ofFloat(0, 1);
         newDataAnimator.setInterpolator(new LinearInterpolator());
         newDataAnimator.setDuration(600);
         newDataAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float value= (float) animation.getAnimatedValue();
-                float temp=value*(mWidth/5);
-                newDataSize=newDataSize+5;
-                if (value!=0){
+                float value = (float) animation.getAnimatedValue();
+                newDataSize = newDataSize + 5;
+                if (value != 0) {
                     //System.out.println("value="+value);
                 }
-                isNewData=true;
+                isNewData = true;
                 invalidate();
             }
         });
@@ -248,11 +252,9 @@ public class ChartView extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
 
-
-                isNewData=false;
-                newDataSize=5f;
+                isNewData = false;
+                newDataSize = 5f;
                 verticalAnimator.start();
-
 
             }
 
@@ -268,31 +270,32 @@ public class ChartView extends View {
         });
 
     }
+
     /***
      * 横向动画
      *
      **/
     private void animatorHorizontial() {
 
-        isNewData=false;
-        valueAnimator= ValueAnimator.ofFloat(0.0f,1.0f);
+        isNewData = false;
+        valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(700);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
 
-                float value= (float) animation.getAnimatedValue();
-                float temp=value*(mWidth/5);
-                if (value!=0){
+                float value = (float) animation.getAnimatedValue();
+                float temp = value * (mWidth / 5);
+                if (value != 0) {
                     //System.out.println("value="+value);
                 }
-                pointSize= (float) (pointSize-0.2);
-                redPointSize= (float) (redPointSize-0.2);
-                for (int i=0;i<tempList.size();i++){
+                pointSize = (float) (pointSize - 0.2);
+                redPointSize = (float) (redPointSize - 0.2);
+                for (int i = 0; i < tempList.size(); i++) {
 
-                    linkedList.get(i).set((tempList.get(i).x)-temp,tempList.get(i).y);
-                    //System.out.println(tempList.get(i).x+" -- "+ linkedList.get(i).x);
+                    linkedList.get(i).set((tempList.get(i).x) - temp, tempList.get(i).y);
+
 
                 }
                 invalidate();
@@ -314,21 +317,18 @@ public class ChartView extends View {
                         linkedList.remove(0);
                     }
                 }
-                if (linkedList!=null&&linkedList.size()<5)
-                {
-                    if (newDataList.size()<0){
-                        linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
-                    }else {
+                if (linkedList != null && linkedList.size() < 5) {
+                    if (newDataList.size() < 0) {
+                        linkedList.add(new PointF((float) (mWidth / 5 * 4), (float) Math.random() * 300 + 100));
+                    } else {
                         linkedList.add(newDataList.get(0));
                     }
 
                 }
-
-
-                tempList =copyData(linkedList);
-                isNewData=false;
-                pointSize=26f;
-                redPointSize=18f;
+                tempList = copyData(linkedList);
+                isNewData = false;
+                pointSize = 26f;
+                redPointSize = 18f;
                 newDataAnimator.start();
 
             }
@@ -351,38 +351,38 @@ public class ChartView extends View {
      **/
     private void animatorVertical() {
 
-        float slideH=0;
-        if (temperatureCount>0){
 
-            slideH=temperatureCount;
-        }else {
-            slideH=Math.abs(temperatureCount);
-        }
-        verticalAnimator= ValueAnimator.ofFloat(0,1);
+        verticalAnimator = ValueAnimator.ofFloat(0, 1);
         verticalAnimator.setInterpolator(new LinearInterpolator());
         verticalAnimator.setDuration(700);
-        final float finalSlideH = slideH;
         verticalAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float value= (float) animation.getAnimatedValue();
+                float value = (float) animation.getAnimatedValue();
 
-                float temp=value*(mHeight/6* finalSlideH);
-                if (value!=0){
-                    //System.out.println("vertical="+value);
+                TEMPERATURE_MIN = TEMPERATURE_MIN_C;
+                TEMPERATURE_MAX = TEMPERATURE_MAX_C;
+                float temp = 0;
+                if (temperatureCount > 0) {
+                    //此处本应为mHeight/6*3/10*temperatureCount，简写如下
+                    temp = value * (mHeight / 20 * temperatureCount);
+                } else {
+                    temp = value * (mHeight / 20 * Math.abs(temperatureCount));
                 }
-                for (int i=0;i<tempList.size();i++){
 
-                    if (temperatureCount<0){
-                        linkedList.get(i).set((tempList.get(i).x),(tempList.get(i).y)+temp);
-                    }else if(temperatureCount>0){
-                        linkedList.get(i).set((tempList.get(i).x),(tempList.get(i).y)-temp);
-                    }else {
+
+                if (value != 0) {
+                    //System.out.println("vertical="+temp);
+                }
+                for (int i = 0; i < tempList.size(); i++) {
+
+                    if (temperatureCount < 0) {
+                        linkedList.get(i).set((tempList.get(i).x), (tempList.get(i).y) - temp);
+                    } else if (temperatureCount > 0) {
+                        linkedList.get(i).set((tempList.get(i).x), (tempList.get(i).y) + temp);
+                    } else {
                         verticalAnimator.cancel();
                     }
-
-
-
                 }
                 invalidate();
             }
@@ -397,9 +397,9 @@ public class ChartView extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
 
-                isRuning=true;
-                temperatureCount=0;
-                tempList =copyData(linkedList);
+                isRuning = true;
+                temperatureCount = 0;
+                tempList = copyData(linkedList);
             }
 
             @Override
@@ -426,7 +426,7 @@ public class ChartView extends View {
     }
 
 
-    //深复制
+    //复制list
     private ArrayList<PointF> copyData(List<PointF> points) {
         //System.out.println(points.get(0).x);
         ArrayList<PointF> data = new ArrayList<>();
@@ -438,10 +438,9 @@ public class ChartView extends View {
     }
 
     /**
-     *
-     * @param duration      动画持续时间
+     * @param duration 动画持续时间
      */
-    public void startAnim( long duration) {
+    public void startAnim(long duration) {
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, "percentage", 0.0f, 1.0f);
         anim.setDuration(duration);
         anim.setInterpolator(new LinearInterpolator());
@@ -456,6 +455,7 @@ public class ChartView extends View {
     }
 
     //  计算动画进度
+    // TODO: 2017/5/12 先不用
     public void setPercentage(float percentage) {
         if (percentage < 0.0f || percentage > 1.0f) {
             throw new IllegalArgumentException(
@@ -465,6 +465,7 @@ public class ChartView extends View {
         invalidate();
     }
 
+    // TODO: 2017/5/12 先不用
     private void setAnim(Canvas canvas) {
 
         PathMeasure measure = new PathMeasure(path, false);
@@ -485,45 +486,44 @@ public class ChartView extends View {
         drawPoint(canvas);
 
 
-        if (isFirst){
+        if (isFirst) {
             canvas.save();
-            canvas.clipRect(firstValue,0,mWidth/5*4+27,mHeight, Region.Op.REPLACE);
+            canvas.clipRect(firstValue, 0, mWidth / 5 * 4 + 27, mHeight, Region.Op.REPLACE);
             canvas.drawColor(Color.parseColor("#087DFF"));
             canvas.restore();
         }
-        if (isNewData){
-            canvas.clipRect(mWidth/5*3+newDataSize,0,mWidth/5*4+27,mHeight, Region.Op.REPLACE);
+        if (isNewData) {
+            canvas.clipRect(mWidth / 5 * 3 + newDataSize, 0, mWidth / 5 * 4 + 27, mHeight, Region.Op.REPLACE);
             canvas.drawColor(Color.parseColor("#087DFF"));
         }
-        if (isOnce){
+        if (isOnce) {
             handler.removeMessages(0x1235);
             handler.sendEmptyMessage(0x1235);
-            isOnce=false;
+            isOnce = false;
         }
-        if (isRuning){
+        if (isRuning) {
             handler.removeMessages(0x1234);
             handler.sendEmptyMessage(0x1234);
         }
 
 
-
-
-
     }
 
+    /**
+     * 画折线的下部覆盖涂层
+     */
     private void drawBg(Canvas canvas) {
         Path path = new Path();
         path.moveTo(0, centerY);
         path.lineTo(linkedList.get(0).x, linkedList.get(0).y);
-        int k=0;
+        int k = 0;
         for (int i = 1; i < linkedList.size(); i++) {
             PointF point = linkedList.get(i);
-            path.lineTo(point.x, point.y );
+            path.lineTo(point.x, point.y);
             k++;
         }
         path.lineTo(linkedList.get(k).x, centerY);
         path.close();
-
 
         Shader bgShader1 = new LinearGradient(0.0F, 0.0F, 0.0F, centerY, 0x4cffffff, 0x42ffffff, Shader.TileMode.CLAMP);
         bgPaint.setShader(bgShader1);
@@ -534,40 +534,33 @@ public class ChartView extends View {
     //画点
     private void drawPoint(Canvas canvas) {
 
-        for (int i=1;i<linkedList.size()-1;i++){
+        for (int i = 1; i < linkedList.size() - 1; i++) {
 
-            canvas.drawCircle(linkedList.get(i).x, linkedList.get(i).y, 16f,pointPaint);
+            canvas.drawCircle(linkedList.get(i).x, linkedList.get(i).y, 16f, pointPaint);
         }
-        canvas.drawCircle(linkedList.get(linkedList.size()-1).x, linkedList.get(linkedList.size()-1).y, pointSize,pointPaint);
+        canvas.drawCircle(linkedList.get(linkedList.size() - 1).x, linkedList.get(linkedList.size() - 1).y, pointSize, pointPaint);
 
-        if (linkedList.get(linkedList.size()-1).y<=linkedList.get(linkedList.size()-2).y){
-            canvas.drawCircle(linkedList.get(linkedList.size()-1).x, linkedList.get(linkedList.size()-1).y, redPointSize,redPointPaint);
+        if (linkedList.get(linkedList.size() - 1).y <= linkedList.get(linkedList.size() - 2).y) {
+            canvas.drawCircle(linkedList.get(linkedList.size() - 1).x, linkedList.get(linkedList.size() - 1).y, redPointSize, redPointPaint);
 
-        }else {
-            canvas.drawCircle(linkedList.get(linkedList.size()-1).x, linkedList.get(linkedList.size()-1).y, redPointSize,bluePointPaint);
+        } else {
+            canvas.drawCircle(linkedList.get(linkedList.size() - 1).x, linkedList.get(linkedList.size() - 1).y, redPointSize, bluePointPaint);
 
         }
-
 
 
     }
+
     //画线
     private void drawPointLine(Canvas canvas) {
 
+        for (int i = 0; i < linkedList.size() - 1; i++) {
 
-        for (int i=0;i<linkedList.size()-1;i++){
-
-            canvas.drawLine(linkedList.get(i).x, linkedList.get(i).y,linkedList.get(i+1).x, linkedList.get(i+1).y,linePaint);
+            canvas.drawLine(linkedList.get(i).x, linkedList.get(i).y, linkedList.get(i + 1).x, linkedList.get(i + 1).y, linePaint);
 
         }
 
-
-
-
-
-
     }
-
 
 
     /**
@@ -575,16 +568,17 @@ public class ChartView extends View {
      *
      * @return
      */
+    //TODO: 2017/5/12 先不用
+    private final int REFRESH = 20;
 
-    private final  int REFRESH=20;
     private LinkedList<PointF> buildDetailPoints() {
         LinkedList<PointF> pointss = new LinkedList<>();
-        for (int i=0;i<linkedList.size();i++){
-            ArrayList<Float> x=divideXY(linkedList.get(i+1).x,linkedList.get(i).x);
-            ArrayList<Float> y=divideXY(linkedList.get(i+1).y,linkedList.get(i).y);
-            for (int t = 0; t<x.size(); t++) {
+        for (int i = 0; i < linkedList.size(); i++) {
+            ArrayList<Float> x = divideXY(linkedList.get(i + 1).x, linkedList.get(i).x);
+            ArrayList<Float> y = divideXY(linkedList.get(i + 1).y, linkedList.get(i).y);
+            for (int t = 0; t < x.size(); t++) {
                 // 直线切分点集
-                pointss.add(new PointF(x.get(t),y.get(t)));
+                pointss.add(new PointF(x.get(t), y.get(t)));
             }
         }
 
@@ -592,16 +586,16 @@ public class ChartView extends View {
     }
 
     /**
-     * 直线切分算法
-
+     * 直线切分
+     *
      * @param xy1 点1
      * @param xy2 点2
      * @return
      */
-    private ArrayList<Float> divideXY(float xy2,  float xy1) {
-        ArrayList<Float> arrayList=new ArrayList<>();
-        for (int i=0;i<REFRESH;i++){
-            arrayList.add((xy2-xy1)/REFRESH*i);
+    private ArrayList<Float> divideXY(float xy2, float xy1) {
+        ArrayList<Float> arrayList = new ArrayList<>();
+        for (int i = 0; i < REFRESH; i++) {
+            arrayList.add((xy2 - xy1) / REFRESH * i);
         }
         return arrayList;
     }
@@ -612,76 +606,102 @@ public class ChartView extends View {
      *
      * @param temperature 温度
      * @return 屏幕的像素高度
-     * */
-    private float temperatureToPix(float temperature){
-        float pix=0f;
+     */
+    private float temperatureToPix(float temperature) {
+        float pix = 0f;
         //每一度所代表的像素高度
-        System.out.println(temperature);
-        float single=(centerY-centerY/5*2)/10;
-
-        pix=centerY-centerY/5-(temperature-TEMPERATURE_MIN_C)*single;
+        //System.out.println(temperature);
+        float single = (centerY - centerY / 5 * 2) / (TEMPERATURE_MAX_C - TEMPERATURE_MIN_C);
+        pix = centerY - centerY / 5 - (temperature - TEMPERATURE_MIN_C) * single;
 
         return pix;
 
     }
+
+
     /**
      *
-     * 设置温度
-     *
+     * view结束时回收各种资源
      * */
 
-    //温度差计数器
-    private int temperatureCount=0;
+    public void recycleResourse(){
+        if (firstAnimator!=null){
+            firstAnimator.cancel();
+        }
+        if (valueAnimator!=null){
+            valueAnimator.cancel();
+        }
+        if (newDataAnimator!=null){
+            newDataAnimator.cancel();
+        }
+        if (verticalAnimator!=null){
+            verticalAnimator.cancel();
+        }
+        isRuning=false;
+        isFirst=false;
+        isOnce=false;
+        isNewData=false;
+    }
+    /**
+     * 设置温度
+     */
 
-    public void setTempurature(float temperature){
-        while (temperature>TEMPERATURE_MAX_C){
+    //温度差计数器
+    private int temperatureCount = 0;
+
+    public void setTempurature(float temperature,boolean is) {
+        temperatureCount=0;
+        while (temperature > TEMPERATURE_MAX_C) {
             TEMPERATURE_MAX_C++;
             TEMPERATURE_MIN_C++;
             temperatureCount++;
         }
-        while (temperature<=TEMPERATURE_MIN_C){
+        while (temperature <= TEMPERATURE_MIN_C) {
             TEMPERATURE_MAX_C--;
             TEMPERATURE_MIN_C--;
             temperatureCount--;
         }
+        if (newDataList==null){
+            newDataList=new LinkedList<>();
+        }
         newDataList.clear();
-        newDataList.add(new PointF(mWidth/5*4,temperatureToPix(temperature)));
+        newDataList.add(new PointF(mWidth / 5 * 4, temperatureToPix(temperature)));
     }
 
-    //绘制温度
+    //绘制温度刻度
     private void drawChartLine(Canvas canvas) {
 
         //温度
         temperaturePaint.setStyle(Paint.Style.FILL);
         temperaturePaint.setTextSize(50);
-        canvas.drawText(TEMPERATURE_MIN_C+"", mWidth-120, centerY - centerY / 4, temperaturePaint);
+        canvas.drawText(TEMPERATURE_MIN + "", mWidth - 120, centerY - centerY / 4, temperaturePaint);
 
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.STROKE);
         temperaturePaint.setStrokeWidth(4);
-        canvas.drawCircle(mWidth-50,centerY - centerY / 3+20,9f,temperaturePaint);
-       // canvas.drawText("o", mWidth-120+54, centerY - centerY / 3+20, temperaturePaint);
+        canvas.drawCircle(mWidth - 50, centerY - centerY / 3 + 20, 9f, temperaturePaint);
+
 
         temperaturePaint.setStrokeWidth(6);
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.FILL);
-        canvas.drawText("c", mWidth-40, centerY - centerY / 4, temperaturePaint);
+        canvas.drawText("c", mWidth - 40, centerY - centerY / 4, temperaturePaint);
 
         ///////
         temperaturePaint.setStyle(Paint.Style.FILL);
         temperaturePaint.setTextSize(50);
-        canvas.drawText(TEMPERATURE_MAX_C + "", mWidth-120, centerY / 6 , temperaturePaint);
+        canvas.drawText(TEMPERATURE_MAX + "", mWidth - 120, centerY / 6, temperaturePaint);
 
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.STROKE);
         temperaturePaint.setStrokeWidth(4);
-        canvas.drawCircle(mWidth-50,centerY / 7-15,9f,temperaturePaint);
+        canvas.drawCircle(mWidth - 50, centerY / 7 - 15, 9f, temperaturePaint);
         temperaturePaint.setStrokeWidth(6);
-        //canvas.drawText("o", mWidth-120+54, centerY / 7-15 , temperaturePaint);
+
 
         temperaturePaint.setTextSize(40);
         temperaturePaint.setStyle(Paint.Style.FILL);
-        canvas.drawText("c", mWidth-40, centerY / 6 , temperaturePaint);
+        canvas.drawText("c", mWidth - 40, centerY / 6, temperaturePaint);
         temperaturePaint.setStyle(Paint.Style.FILL);
 
     }
