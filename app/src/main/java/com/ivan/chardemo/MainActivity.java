@@ -1,5 +1,6 @@
 package com.ivan.chardemo;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -25,20 +26,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        chartView= (ChartView) findViewById(R.id.chart);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    handler.sendEmptyMessage(0x1234);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+        Intent intent=new Intent(this,SettingActivity.class);
+
+
+        startActivity(intent);
+//        chartView= (ChartView) findViewById(R.id.chart);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true){
+//                    handler.sendEmptyMessage(0x1234);
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
 
 
 
