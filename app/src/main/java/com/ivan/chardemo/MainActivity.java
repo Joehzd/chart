@@ -1,5 +1,6 @@
 package com.ivan.chardemo;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -12,10 +13,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0x1234:
-                    chartView.setTempurature((float) Math.random()*10+32);
+                    chartView.setTempurature((float) Math.random()*10+35,true);
                     break;
-
-
             }
 
         }
@@ -26,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 //        chartView= (ChartView) findViewById(R.id.chart);
 //        new Thread(new Runnable() {
 //            @Override
@@ -42,7 +40,32 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }).start();
 
+        Intent intent=new Intent(this,SettingActivity.class);
 
 
+        startActivity(intent);
+//        chartView= (ChartView) findViewById(R.id.chart);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true){
+//                    handler.sendEmptyMessage(0x1234);
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
+
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //chartView.recycleResourse();
     }
 }
