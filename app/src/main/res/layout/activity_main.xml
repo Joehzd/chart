@@ -3,15 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ivan.chardemo.ChartView
-        android:id="@+id/chart"
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+    <!--<com.ivan.chardemo.ChartView-->
+        <!--android:id="@+id/chart"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp" />-->
 
-    <com.ivan.chardemo.ChartLineView
+    <!--<com.ivan.chardemo.ChartLineView-->
 
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp" />-->
+    <!--<com.ivan.chardemo.BeisaierView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+    <com.ivan.chardemo.BoLangView
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

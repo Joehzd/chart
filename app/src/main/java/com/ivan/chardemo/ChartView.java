@@ -179,7 +179,7 @@ public class ChartView extends View {
                 firstValue=firstValue+(temp-saveTemp[0]);
                 saveTemp[0] =temp;
                 if (value!=0){
-                    System.out.println("firstValue="+firstValue);
+                    //System.out.println("firstValue="+firstValue);
                 }
 
                 invalidate();
@@ -317,7 +317,9 @@ public class ChartView extends View {
                 if (linkedList!=null&&linkedList.size()<5)
                 {
                     if (newDataList.size()<0){
-                        linkedList.add(new PointF((float) (mWidth / 5*4), (float)Math.random()*300+100));
+                        float tempY=(float)Math.random()*300+100;
+                        System.out.println("tempy"+tempY);
+                        linkedList.add(new PointF((float) (mWidth / 5*4),tempY ));
                     }else {
                         linkedList.add(newDataList.get(0));
                     }

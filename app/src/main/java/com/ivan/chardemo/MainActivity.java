@@ -27,20 +27,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        chartView= (ChartView) findViewById(R.id.chart);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    handler.sendEmptyMessage(0x1234);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+//        chartView= (ChartView) findViewById(R.id.chart);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true){
+//                    handler.sendEmptyMessage(0x1234);
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
 
 
 
