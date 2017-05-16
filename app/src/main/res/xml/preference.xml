@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="设置">
         <SwitchPreference
             android:key="temperature_unit"
             android:summaryOff="F"
@@ -13,13 +12,13 @@
 
         </SwitchPreference>
 
-        <Preference android:title="智能锁屏" />
+        <Preference android:title="智能锁屏"
+            android:key="smartLock"/>
 
-
-    </PreferenceCategory>
 
     <PreferenceCategory android:title="介绍">
-        <Preference android:title="介绍" />
+        <Preference android:title="介绍"
+            android:key="introduce"/>
     </PreferenceCategory>
 
 
