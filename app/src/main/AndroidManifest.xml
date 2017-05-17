@@ -17,6 +17,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingActivity"/>
+        <activity android:name=".lock.HomeActivity" android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <receiver android:name=".lock.LockReceiver"/>
     </application>
 
 </manifest>

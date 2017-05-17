@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    xmlns:setting="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/setting_background"
+    android:orientation="vertical">
+
+
+
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+           <!--<include layout="@layout/place_view" />-->
+
+            <RelativeLayout
+                android:id="@+id/userItemSwitchView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/light_item_solo">
+
+                <ImageView
+                    android:id="@+id/header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="20dp"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:src="@drawable/avatar_overcover" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toRightOf="@+id/header"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="1000dp"
+                        android:singleLine="true"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!--<com.smartisan.mover.widget.SettingItemSwitch-->
+                <!--android:id="@+id/contactsSyncSwitchView"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/userItemSwitchView"-->
+                <!--android:layout_marginTop="@dimen/cloud_sync_item_margin_header_top"-->
+                <!--android:background="@drawable/light_item_top"-->
+                <!--setting:isEnable="true"-->
+                <!--setting:titles="@string/contacts" />-->
+
+            <!--<com.smartisan.mover.widget.SettingItemSwitch-->
+                <!--android:id="@+id/calendersSyncSwitchView"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/contactsSyncSwitchView"-->
+                <!--android:background="@drawable/light_item_bottom"-->
+                <!--setting:isEnable="true"-->
+                <!--setting:titles="@string/calender" />-->
+
+            <RelativeLayout
+                android:id="@+id/backUpBtn_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp"
+
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/backUpBtn_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:enabled="false"
+                    android:gravity="center"
+                    android:text="备份"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <!--<com.smartisan.mover.widget.TipsView-->
+                <!--android:id="@+id/tipsOne"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/backUpBtn_layout"-->
+                <!--android:layout_marginTop="@dimen/description_item_marginTop"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:lineSpacingExtra="@dimen/description_text_line_space"-->
+                <!--android:paddingLeft="@dimen/description_text_left"-->
+                <!--android:paddingRight="@dimen/description_text_right"-->
+                <!--android:text="@string/backUpNotes"-->
+                <!--android:textColor="@color/forget_pwd_text_color"-->
+                <!--android:textSize="@dimen/description_text_size_small" />-->
+
+            <!--<com.smartisan.mover.widget.TipsView-->
+                <!--android:id="@+id/tipsTwo"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/tipsOne"-->
+                <!--android:layout_marginTop="@dimen/description_tips_marginTop"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:lineSpacingExtra="@dimen/description_text_line_space"-->
+                <!--android:paddingLeft="@dimen/description_text_left"-->
+                <!--android:paddingRight="@dimen/description_text_right"-->
+                <!--android:text="@string/backUpDesc"-->
+                <!--android:textColor="@color/forget_pwd_text_color"-->
+                <!--android:textSize="@dimen/description_text_size_small" />-->
+
+            <Button
+                android:id="@+id/exitLogin"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/long_red_button_solo"
+                android:text="推出"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <!--<ImageView-->
+        <!--style="@style/titleBarShadowStyle"-->
+        <!--android:layout_below="@+id/sync_main_title_bar" />-->
+</RelativeLayout>
