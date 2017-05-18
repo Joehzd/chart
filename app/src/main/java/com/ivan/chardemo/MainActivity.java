@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView= (TextView) findViewById(R.id.text);
-        //Spannable spannable=
+        //Spannable spannable=1234456t6666
 
         Drawable drawable = getResources().getDrawable(R.drawable.temperature_oval);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
