@@ -129,6 +129,8 @@
                 <!--android:textColor="@color/forget_pwd_text_color"-->
                 <!--android:textSize="@dimen/description_text_size_small" />-->
 
+
+
             <Button
                 android:id="@+id/exitLogin"
                 android:layout_width="fill_parent"
