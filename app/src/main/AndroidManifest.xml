@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".lock.LockReceiver"/>
+        <activity android:name=".DialogActivity" android:theme="@android:style/Theme.Holo.Dialog"/>
     </application>
 
 </manifest>

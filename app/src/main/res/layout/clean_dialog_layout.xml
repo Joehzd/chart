@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/dialog_bg_shape"
+    android:orientation="vertical">
+
+    <TextView
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="40dp"
+        android:padding="5dp"
+        android:textAllCaps="true"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LONG-LASTING COOLING" />
+
+    <TextView
+        android:textSize="14sp"
+        android:paddingTop="35dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="It's  more effective to cool down your phone.\n\n
+The cooling effect is 50% higher than the usual way." />
+
+    <TextView
+        android:textSize="14sp"
+        android:paddingTop="25dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center"
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please turn on the LONG-LASTING COOLING for better experience" />
+
+
+    <Button
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/long_red_button_solo"
+        android:text="Button" />
+</LinearLayout>
