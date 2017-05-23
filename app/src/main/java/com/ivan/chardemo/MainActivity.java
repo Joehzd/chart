@@ -45,23 +45,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView= (TextView) findViewById(R.id.text);
+//        textView= (TextView) findViewById(R.id.text);
 
 
-        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
-
-        LayoutInflater layoutInflater=this.getLayoutInflater();
-        View view=layoutInflater.inflate(R.layout.clean_dialog_layout,null);
-        button= (Button) view.findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(),"点我",Toast.LENGTH_LONG).show();
-            }
-        });
-
-        dialog.setView(view);
-        dialog.create().show();
+//        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+//
+//        LayoutInflater layoutInflater=this.getLayoutInflater();
+//        View view=layoutInflater.inflate(R.layout.clean_dialog_layout,null);
+//        button= (Button) view.findViewById(R.id.button2);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(),"点我",Toast.LENGTH_LONG).show();
+//            }
+//        });
+//
+//        dialog.setView(view);
+//        dialog.create().show();
 
 
 
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         //开始替换，注意第2和第3个参数表示从哪里开始替换到哪里替换结束（start和end）
         //最后一个参数类似数学中的集合,[5,12)表示从5到12，包括5但不包括12
         spannable.setSpan(span, spannable.length()-2,spannable.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        textView.setText(spannable);
+        //textView.setText(spannable);
 //        chartView= (ChartView) findViewById(R.id.chart);
 //        new Thread(new Runnable() {
 //            @Override

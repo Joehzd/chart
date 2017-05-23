@@ -8,4 +8,8 @@
         <attr name="tabletext_color" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="ScanView">
+        <attr name="first_bg" format="reference"/>
+        <attr name="second_bg" format="reference"/>
+    </declare-styleable>
 </resources>
