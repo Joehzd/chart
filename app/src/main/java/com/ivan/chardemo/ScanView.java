@@ -49,8 +49,9 @@ public class ScanView extends View {
         paint.setColor(Color.parseColor("#FFFfff"));
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
 
-        cleanPaint.setColor(Color.argb(255,255,255,255));
-        cleanPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        cleanPaint.setColor(Color.argb(100,255,255,255));
+        cleanPaint.setStyle(Paint.Style.FILL);
+
 
         tempPaint.setColor(Color.argb(0,0,0,0));
         tempPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST));
@@ -141,7 +142,7 @@ public class ScanView extends View {
         //canvas.drawColor(Color.argb(0,255,255,255));
         if (drawable!=null){
             canvas.clipRect(0,changeHeight,mScreenWidth,mScreenHeight, Region.Op.REPLACE);
-            canvas.drawBitmap(bitmap_cpu_cover,11,0,paint);
+            canvas.drawBitmap(bitmap_cpu_cover,20,0,paint);
 
 //            drawable.setBounds(0,0,mScreenWidth,mScreenHeight);
 //            drawable.draw(canvas);
@@ -151,15 +152,19 @@ public class ScanView extends View {
 
 
             if (mScreenHeight-changeHeight>40){
-                drawable2.setBounds(0,changeHeight-55,mScreenWidth-35,changeHeight-15);
-
-                drawable2.draw(canvas);
+//                drawable2.setBounds(0,changeHeight-55,mScreenWidth-35,changeHeight-15);
+//
+//                drawable2.draw(canvas);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //canvas.drawArc(0,changeHeight-60,mScreenWidth,changeHeight+20,10,10,true,cleanPaint);
+                    canvas.drawOval(0,changeHeight-50,mScreenWidth-20,changeHeight+10,cleanPaint);
+                }
 //                drawable2.setBounds(10,changeHeight-45,mScreenWidth-65,changeHeight);
 //
 //                drawable2.draw(canvas);
             }
 
-            canvas.drawBitmap(bitmap_cpu_line,11,0,paint);
+            canvas.drawBitmap(bitmap_cpu_line,20,0,paint);
 
         }
 
